@@ -9,23 +9,21 @@
 </body>
 
 <script>
-  // The svg
-  const svg = d3.select('svg'),
-    width = +svg.attr('width'),
-    height = +svg.attr('height');
-  // Map and projection
-  const path = d3.geoPath();
-  const projection = d3
-    .geoMercator()
-    .scale(70)
-    .center([0, 20])
-    .translate([width / 2, height / 2]);
-  // Data and color scale
-  let data = new Map();
-  const colorScale = d3
-    .scaleThreshold()
-    .domain([10000, 100000, 200000, 300000, 400000, 500000])
-    .range(d3.schemeBlues[3]);
+ // The svg
+const svg = d3.select("svg"),
+  width = +svg.attr("width"),
+  height = +svg.attr("height");
+// Map and projection
+const path = d3.geoPath();
+const projection = d3.geoMercator()
+  .scale(70)
+  .center([0,20])
+  .translate([width / 2, height / 2]);
+// Data and color scale
+const data = new Map();
+const colorScale = d3.scaleThreshold()
+  .domain([10000, 100000, 200000, 300000, 400000, 500000])
+  .range(d3.schemeBlues[3]);
   const visitsCountryDay = `name,code,visits
   Germany,DEU,5418017
   Russian,RUS,378844
@@ -74,28 +72,78 @@
   Croatia,HRV,19557
   Moldova,MDA,13022
   `;
-  // Load external data and boot
-  Promise.all([
-    d3.json(
-      'https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson'
-    ),
-    d3.csvParse(visitsCountryDay, function (d) {
-      data.set(d.code, +d.visits);
-    }),
-  ]).then(function (loadData) {
-    let topo = loadData[0];
-    // Draw the map
-    svg
-      .append('g')
-      .selectAll('path')
-      .data(topo.features)
-      .join('path')
+  var mapName = d3.select("body").append("div")                 
+  .text('Visits Country Day: 27 Febr 2022')
+  .style('color', 'black')
+  .style('font-size', '20px')
+  var tooltipDiv = d3.select("body").append("div")    
+  .attr("class", "tooltip")               
+  .style("opacity", 0);
+// Load external data and boot
+Promise.all([
+d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson"),
+d3.csvParse(visitsCountryDay, function(d) {
+    data.set(d.code, +d.visits)
+})]).then(function(loadData){
+    let topo = loadData[0]
+    let mouseOver = function(d) {
+    d3.selectAll(".Country")
+      .transition()
+      .duration(200)
+      .style("opacity", .5)
+    d3.select(this)
+      .transition()
+      .duration(200)
+      .style("opacity", 1)
+      .style("stroke", "black")
+    tooltipDiv.transition()     
+            .duration(200)      
+            .style("opacity", .9);  
+    tooltipDiv.html(d3.select(this).attr('country-name') + ': ' + d3.select(this).attr('country-visits'))  
+      .style("left", "100px")     
+      .style("top", "70px")
+      .style("position", "absolute")
+      .style("width", "120px")
+      .style("height", "30px")
+      .style("background", "lightsteelblue")
+      .style("border", "0px")
+      .style("border-radius", "8px")
+      .style("padding", "8px")
+  }
+  let mouseLeave = function(d) {
+    d3.selectAll(".Country")
+      .transition()
+      .duration(200)
+      .style("opacity", .8)
+    d3.select(this)
+      .transition()
+      .duration(200)
+      .style("stroke", "transparent")
+      tooltipDiv.transition()        
+            .duration(500)      
+            .style("opacity", 0);  
+  }
+  // Draw the map
+  svg.append("g")
+    .selectAll("path")
+    .data(topo.features)
+    .enter()
+    .append("path")
       // draw each country
-      .attr('d', d3.geoPath().projection(projection))
+      .attr("d", d3.geoPath()
+        .projection(projection)
+      )
       // set the color of each country
-      .attr('fill', function (d) {
+      .attr("fill", function (d) {
         d.total = data.get(d.id) || 0;
         return colorScale(d.total);
-      });
-  });
+      })
+      .style("stroke", "transparent")
+      .attr("class", function(d){ return "Country" } )
+      .attr("country-name", function(d){ return d.properties.name} )
+      .attr("country-visits", function(d){ return d.total} )
+      .style("opacity", .8)
+      .on("mouseover", mouseOver )
+      .on("mouseleave", mouseLeave )
+})
 </script>
