@@ -1,23 +1,58 @@
+<!doctype html>
 <html>
-<body>
-  Hello dashboards
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <style>
-    .container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-    iframe {
-      justify-self: center;
-    }
-  </style>
+		<title>reveal.js</title>
 
- <div class="container">
-   <iframe src="./graph1/index.html" width="500" height="500"></iframe>
-   <iframe src="./visits-per-country/index.html" width="500" height="500"></iframe>
-   <iframe src="./bounce-rate-plot/index.html" width="500" height="500"></iframe>
-   <iframe src="./loads_per_visit/index.html" width="550" height="400"></iframe>
- </div>
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/white.css">
 
-</body>
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+          <section>
+            <h3>Example from the docs</h3>
+            <iframe src="./graph1/index.html" width="500" height="500"></iframe>
+          </section>
+          <section>
+            <h3>Visits per country</h3>
+            <iframe src="./visits-per-country/index.html" width="500" height="500"></iframe>
+          </section>
+        </section>
+				<section>
+          <section>
+            <h3>Bounce rate</h3>
+            <iframe src="./bounce-rate-plot/index.html" width="500" height="500"></iframe>
+          </section>
+          <section>
+            <h3>Loads per visit</h3>
+            <iframe src="./loads_per_visit/index.html" width="550" height="400"></iframe>
+          </section>
+        </section>
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
 </html>
