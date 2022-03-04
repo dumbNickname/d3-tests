@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script src="https://d3js.org/topojson.v1.min.js"></script>
+<body>
+  <!-- Create a div where the graph will take place -->
+  <div id="my_dataviz"></div>
+</body>
+
+<script>
+  const fancyData = {
+    DataFeed: {
+      Columns: [
+        {
+          Label: 'Bounce rate',
+          Name: 'm_bounce_rate',
+          //
+          Description: 'Ratio between bounces and all visits.',
+          CustomerType: 'Percent',
+          Category: 'Metric',
+          Filterable: true,
+          Pie: false,
+          Precision: 3,
+          Summable: false,
+          Type: 'Decimal',
+        },
+        {
+          Label: 'Day',
+          Name: 'd_evo_day',
+          //
+          Category: 'Dimension',
+          CustomerType: 'Time',
+          Description: '',
+          Filterable: true,
+          Type: 'Date',
+        },
+      ],
+      Context: {
+        Periods: [
+          {
+            Value: '2022-02-21,2022-02-27',
+          },
+        ],
+      },
+      Rows: [
+        {
+          Rows: {
+            Rows: [
+              {
+                d_evo_day: '2022-02-21',
+                m_bounce_rate: 0.805867,
+              },
+              {
+                d_evo_day: '2022-02-22',
+                m_bounce_rate: 0.784089,
+              },
+              {
+                d_evo_day: '2022-02-23',
+                m_bounce_rate: 0.782563,
+              },
+              {
+                d_evo_day: '2022-02-24',
+                m_bounce_rate: 0.778364,
+              },
+              {
+                d_evo_day: '2022-02-25',
+                m_bounce_rate: 0.797798,
+              },
+              {
+                d_evo_day: '2022-02-26',
+                m_bounce_rate: 0.794835,
+              },
+              {
+                d_evo_day: '2022-02-27',
+                m_bounce_rate: 0.797624,
+              },
+            ],
+            m_bounce_rate: '0',
+          },
+        },
+      ],
+    },
+  };
+  
+  // set the dimensions and margins of the graph
+  const margin = { top: 10, right: 30, bottom: 30, left: 60 },
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+  // append the svg object to the body of the page
+  const svg = d3
+    .select('#my_dataviz')
+    .append('svg')
+    .attr('width', width + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom)
+    .append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`);
+      
+      const data = fancyData.DataFeed.Rows[0].Rows.Rows.map(entry => ({
+        date: d3.timeParse('%Y-%m-%d')(entry.d_evo_day),
+        value: entry.m_bounce_rate,
+      }));
+      
+      // Add X axis --> it is a date format
+      const x = d3
+        .scaleTime()
+        .domain(d3.extent(data, (d) => d.date))
+        .range([0, width]);
+      svg
+        .append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x));
+
+      // Add Y axis
+      const y = d3.scaleLinear().domain([0, 1]).range([height, 0]);
+      svg.append('g').call(d3.axisLeft(y));
+      // Add the line
+      svg
+        .append('path')
+        .datum(data)
+        .attr('fill', 'none')
+        .attr('stroke', '#69b3a2')
+        .attr('stroke-width', 1.5)
+        .attr(
+          'd',
+          d3
+            .line()
+            .x((d) => x(d.date))
+            .y((d) => y(d.value))
+        );
+      // Add the points
+      svg
+        .append('g')
+        .selectAll('dot')
+        .data(data)
+        .join('circle')
+        .attr('cx', (d) => x(d.date))
+        .attr('cy', (d) => y(d.value))
+        .attr('r', 5)
+        .attr('fill', '#69b3a2');
+</script>
+</html>
