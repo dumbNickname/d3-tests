@@ -2,8 +2,19 @@
 <body>
   Hello dashboards
 
- <div class="graph1">
+  <style>
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    iframe {
+      justify-self: center;
+    }
+  </style>
+
+ <div class="container">
    <iframe src="./graph1/index.html" width="500" height="500"></iframe>
+   <iframe src="./visits-per-country/index.html" width="500" height="500"></iframe>
  </div>
 
 </body>
